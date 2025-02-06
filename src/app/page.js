@@ -42,35 +42,37 @@ export default function Home() {
     <>
       <>
         <div>
-          <button onClick={(e) => setPage(page - 1)}>PREV</button>
-          <button onClick={(e) => setPage(page + 1)}>NEXT</button>
+          <button className={styles.button} onClick={(e) => setPage(page - 1)}>PREV</button>
+          <button className={styles.button} onClick={(e) => setPage(page + 1)}>NEXT</button>
+          {(page % 4 === 0) ? <button className={styles.button} onClick={addPlayer}>ADD PLAYER</button> : ""}
+          {(page % 4 === 1) ? <button className={styles.button} onClick={addScore}>ADD SCORE</button> : ""}
         </div>
-        {(page % 4 === 0) ?
-          <>
-            <Spreadsheet columnLabels={["Names"]} data={names.map(name => [{ value: name }])} onChange={onChangeName} />
-            <button onClick={addPlayer}>add player</button>
-          </> :
-          (page % 4 === 1) ?
+        <div className={styles.wrapper}>
+          {(page % 4 === 0) ?
             <>
-              <Spreadsheet rowLabels={names} columnLabels={["Minus", "Plus"]} data={roundScore.map(score => [{ value: score[0] }, { value: score[1] }])} onChange={onChangeRS} />
-              <button onClick={addScore}>add score</button>
+              <Spreadsheet columnLabels={["Names"]} data={names.map(name => [{ value: name }])} onChange={onChangeName} />
             </> :
-            (page % 4 === 2) ?
+            (page % 4 === 1) ?
               <>
-                <Spreadsheet columnLabels={names} data={score.map(row => row?.map(v => { return { value: v } }))} onChange={onChangeScore} />
+                <Spreadsheet rowLabels={names} columnLabels={["Minus", "Plus"]} data={roundScore.map(score => [{ value: score[0] }, { value: score[1] }])} onChange={onChangeRS} />
               </> :
-              <>
-                {(score.length === 0) ? <Spreadsheet data={[[{ value: "" }]]} columnLabels={["Denis"]} /> :
-                  <Spreadsheet
-                    columnLabels={["Name", "Score"]}
-                    data={zip(
-                      names,
-                      zip(...score)
-                    ).map(
-                      row => [{ value: row[0] }, { value: row[1]?.reduce((a, b) => (isNaN(a) ? 0 : Number(a)) + (isNaN(b) ? 0 : Number(b)), 0) }]
-                    ).sort((a, b) => b[1].value - a[1].value)} />
-                }</>
-        }
+              (page % 4 === 2) ?
+                <>
+                  <Spreadsheet columnLabels={names} data={score.map(row => row?.map(v => { return { value: v } }))} onChange={onChangeScore} />
+                </> :
+                <>
+                  {(score.length === 0) ? <Spreadsheet data={[[{ value: "" }]]} columnLabels={["Denis"]} /> :
+                    <Spreadsheet
+                      columnLabels={["Name", "Score"]}
+                      data={zip(
+                        names,
+                        zip(...score)
+                      ).map(
+                        row => [{ value: row[0] }, { value: row[1]?.reduce((a, b) => (isNaN(a) ? 0 : Number(a)) + (isNaN(b) ? 0 : Number(b)), 0) }]
+                      ).sort((a, b) => b[1].value - a[1].value)} />
+                  }</>
+          }
+        </div>
       </>
 
 
