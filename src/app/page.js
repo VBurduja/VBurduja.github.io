@@ -5,7 +5,7 @@ import styles from "./page.module.css"
 
 export default function Home() {
   const [names, setNames] = useState(["Denis"]);
-  const [roundScore, setRoundScore] = useState([[0, 0]])
+  const [roundScore, setRoundScore] = useState([[" ", " "]])
   const [score, setScore] = useState([])
   const [page, setPage] = useState(0)
 
@@ -24,7 +24,7 @@ export default function Home() {
 
   function addPlayer() {
     setNames([...names, ""])
-    setRoundScore([...roundScore, [0, 0]])
+    setRoundScore([...roundScore, [" ", " "]])
   }
   function addScore() {
     setScore([...score, roundScore.map(rs => {
@@ -33,7 +33,7 @@ export default function Home() {
       else
         return Number(rs[1]) - Number(rs[0])
     })])
-    setRoundScore(roundScore.map(rs => [0, 0]))
+    setRoundScore(roundScore.map(rs => [" ", " "]))
     console.log(score)
   }
 
@@ -42,36 +42,40 @@ export default function Home() {
     <>
       <>
         <div>
-          <button className={styles.button} onClick={(e) => setPage(page - 1)}>PREV</button>
-          <button className={styles.button} onClick={(e) => setPage(page + 1)}>NEXT</button>
-          {(page % 4 === 0) ? <button className={styles.button} onClick={addPlayer}>ADD PLAYER</button> : ""}
-          {(page % 4 === 1) ? <button className={styles.button} onClick={addScore}>ADD SCORE</button> : ""}
-        </div>
-        <div className={styles.wrapper}>
-          {(page % 4 === 0) ?
-            <>
-              <Spreadsheet columnLabels={["Names"]} data={names.map(name => [{ value: name }])} onChange={onChangeName} />
-            </> :
-            (page % 4 === 1) ?
+          <div className={styles.buttonContainer}>
+            <button className={styles.button} onClick={(e) => setPage(page + 1)}>NEXT</button>
+            <button className={styles.button} onClick={(e) => setPage(page - 1)}>PREV</button>
+            {(page % 4 === 0) ? <button className={[styles.button, styles.test].join(" ")} onClick={addPlayer}>ADD PLAYER</button> : ""}
+            {(page % 4 === 1) ? <button className={styles.button} onClick={addScore}>ADD SCORE</button> : ""}
+            {(page % 4 === 2) ? <button className={styles.button}>STATS</button> : ""}
+            {(page % 4 === 3) ? <button className={styles.button}>STANDINGS</button> : ""}
+          </div>
+          <div className={styles.wrapper}>
+            {(page % 4 === 0) ?
               <>
-                <Spreadsheet rowLabels={names} columnLabels={["Minus", "Plus"]} data={roundScore.map(score => [{ value: score[0] }, { value: score[1] }])} onChange={onChangeRS} />
+                <Spreadsheet columnLabels={["Names"]} data={names.map(name => [{ value: name }])} onChange={onChangeName} />
               </> :
-              (page % 4 === 2) ?
+              (page % 4 === 1) ?
                 <>
-                  <Spreadsheet columnLabels={names} data={score.map(row => row?.map(v => { return { value: v } }))} onChange={onChangeScore} />
+                  <Spreadsheet rowLabels={names} columnLabels={["Minus", "Plus"]} data={roundScore.map(score => [{ value: score[0] }, { value: score[1] }])} onChange={onChangeRS} />
                 </> :
-                <>
-                  {(score.length === 0) ? <Spreadsheet data={[[{ value: "" }]]} columnLabels={["Denis"]} /> :
-                    <Spreadsheet
-                      columnLabels={["Name", "Score"]}
-                      data={zip(
-                        names,
-                        zip(...score)
-                      ).map(
-                        row => [{ value: row[0] }, { value: row[1]?.reduce((a, b) => (isNaN(a) ? 0 : Number(a)) + (isNaN(b) ? 0 : Number(b)), 0) }]
-                      ).sort((a, b) => b[1].value - a[1].value)} />
-                  }</>
-          }
+                (page % 4 === 2) ?
+                  <>
+                    <Spreadsheet columnLabels={names} data={score.map(row => row?.map(v => { return { value: v } }))} onChange={onChangeScore} />
+                  </> :
+                  <>
+                    {(score.length === 0) ? <Spreadsheet data={[[{ value: "" }]]} columnLabels={["Denis"]} /> :
+                      <Spreadsheet
+                        columnLabels={["Name", "Score"]}
+                        data={zip(
+                          names,
+                          zip(...score)
+                        ).map(
+                          row => [{ value: row[0] }, { value: row[1]?.reduce((a, b) => (isNaN(a) ? 0 : Number(a)) + (isNaN(b) ? 0 : Number(b)), 0) }]
+                        ).sort((a, b) => b[1].value - a[1].value)} />
+                    }</>
+            }
+          </div>
         </div>
       </>
 

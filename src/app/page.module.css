@@ -201,6 +201,7 @@ a.secondary {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+
 }
 
 .button:hover {
@@ -217,3 +218,24 @@ a.secondary {
     height: 48px;
   }
 }
+
+@media (min-width: 801px) {
+  .buttonContainer {
+    display: flex;
+    align-items: stretch;
+    flex-flow: row wrap;
+  }
+}
+
+@media (max-width: 400px) {
+
+  .buttonContainer {
+    display: flex;
+    align-items: stretch;
+    flex-flow: column wrap;
+  }
+}
+
+/* .test {
+  flex: 1;
+} */
